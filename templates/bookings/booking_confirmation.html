@@ -1,0 +1,57 @@
+{% extends "partials/base.html" %}
+{% load humanize %}
+
+{% block title %}Booking Confirmed — HotelEase{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light border-bottom">
+    <div class="container text-center">
+        <i class="fa-solid fa-circle-check text-success display-4 mb-3"></i>
+        <h1 class="display-6 fw-bold">Thank you, {{ booking.full_name }}!</h1>
+        <p class="lead text-muted">Your stay at HotelEase has been confirmed. An email confirmation will be shared shortly with further details.</p>
+        <p class="text-muted">Booking Reference: <strong>{{ booking.booking_reference }}</strong></p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a class="btn btn-outline-primary" href="{% url 'core:rooms' %}">Explore Rooms</a>
+            <a class="btn btn-primary" href="{% url 'core:home' %}">Back to Home</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container" style="max-width: 840px;">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <h2 class="h5 mb-4">Booking Summary</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h3 class="h6 text-uppercase text-muted">Guest Details</h3>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2"><strong>Name:</strong> {{ booking.full_name }}</li>
+                            <li class="mb-2"><strong>CNIC:</strong> {{ booking.cnic }}</li>
+                            <li class="mb-2"><strong>Email:</strong> {{ booking.email|default:"—" }}</li>
+                            <li class="mb-2"><strong>Phone:</strong> {{ booking.phone_number|default:"—" }}</li>
+                            <li><strong>Address:</strong> {{ booking.address }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-uppercase text-muted">Stay Information</h3>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2"><strong>Room Type:</strong> {{ booking.get_room_type_display }}</li>
+                            <li class="mb-2"><strong>Assigned Room:</strong> {% if booking.room %}Room {{ booking.room.number }}{% else %}TBA{% endif %}</li>
+                            <li class="mb-2"><strong>Stay Duration:</strong> {{ booking.booking_days }} day(s)</li>
+                            <li class="mb-2"><strong>Airport Pick &amp; Drop:</strong> {% if booking.airport_pick_drop %}Included (Rs. {{ airport_charge|intcomma }}){% else %}Not required{% endif %}</li>
+                            <li><strong>Special Notes:</strong> {{ booking.notes|default:"—" }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-top mt-4 pt-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h5 mb-0">Total Rent</span>
+                        <span class="h4 text-primary fw-bold mb-0">Rs. {{ booking.total_price|intcomma }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

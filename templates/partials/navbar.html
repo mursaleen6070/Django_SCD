@@ -1,0 +1,35 @@
+{% with match=request.resolver_match %}
+<nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">HotelEase</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link {% if match and match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}"><i class="fa-solid fa-house me-1"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if match and match.url_name == 'rooms' %}active{% endif %}" href="{% url 'core:rooms' %}"><i class="fa-solid fa-bed me-1"></i>Rooms</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if match and match.namespace == 'bookings' %}active{% endif %}" href="{% url 'bookings:booking_form' %}"><i class="fa-solid fa-calendar-check me-1"></i>Booking</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if match and match.url_name == 'reviews' %}active{% endif %}" href="{% url 'core:reviews' %}"><i class="fa-solid fa-star me-1"></i>Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if match and match.url_name == 'contact' %}active{% endif %}" href="{% url 'core:contact' %}"><i class="fa-solid fa-envelope me-1"></i>Contact</a>
+                </li>
+            </ul>
+            <div class="d-flex ms-lg-3 mt-3 mt-lg-0 gap-2">
+                {% if user.is_staff %}
+                    <a class="btn btn-outline-light" href="{% url 'core:dashboard' %}"><i class="fa-solid fa-chart-line me-1"></i>Dashboard</a>
+                {% endif %}
+                <a class="btn btn-gold" href="{% url 'admin:index' %}"><i class="fa-solid fa-user-shield me-1"></i>Admin Portal</a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endwith %}

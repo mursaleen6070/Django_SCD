@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Django stuff
+staticfiles/
+media/
+*.sqlite3
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# OS files
+desktop.ini
+Thumbs.db
+.DS_Store# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Django stuff
+staticfiles/
+media/
+*.sqlite3
+
+# VS Code
+.vscode/
+
+# OS files
+desktop.ini
+Thumbs.db
+.DS_Store

@@ -1,0 +1,71 @@
+{% extends "partials/base.html" %}
+
+{% block title %}Invoice {{ payment.invoice_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="h3 mb-0">Hotel Management System</h1>
+                    <p class="text-muted mb-0">Invoice</p>
+                </div>
+                <div class="text-end">
+                    <p class="mb-1"><strong>Invoice #:</strong> {{ payment.invoice_number }}</p>
+                    <p class="mb-1"><strong>Issued:</strong> {{ payment.issued_on|date:"M d, Y" }}</p>
+                    {% if payment.paid_on %}
+                        <p class="mb-0"><strong>Paid:</strong> {{ payment.paid_on|date:"M d, Y" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-uppercase text-muted">Billed To</h6>
+                    <p class="mb-0">{{ payment.booking.customer.full_name }}</p>
+                    <p class="mb-0">{{ payment.booking.customer.email }}</p>
+                    <p class="mb-0">{{ payment.booking.customer.phone }}</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6 class="text-uppercase text-muted">Booking Details</h6>
+                    <p class="mb-0">Room {{ payment.booking.room.number }} ({{ payment.booking.room.category.name }})</p>
+                    <p class="mb-0">Check-in: {{ payment.booking.check_in|date:"M d, Y" }}</p>
+                    <p class="mb-0">Check-out: {{ payment.booking.check_out|date:"M d, Y" }}</p>
+                </div>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Accommodation ({{ payment.booking.num_nights }} nights @ {{ payment.booking.room.rate }})</td>
+                            <td class="text-end">{{ payment.amount }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total Due</th>
+                            <th class="text-end">{{ payment.amount }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <p class="mb-1"><strong>Status:</strong>
+                <span class="badge bg-{% if payment.status == 'paid' %}success{% elif payment.status == 'pending' %}warning text-dark{% else %}secondary{% endif %}">{{ payment.get_status_display }}</span>
+            </p>
+
+            <div class="mt-4">
+                <a href="javascript:window.print();" class="btn btn-outline-primary">Print Invoice</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

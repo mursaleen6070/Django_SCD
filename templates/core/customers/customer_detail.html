@@ -1,0 +1,59 @@
+{% extends "partials/base.html" %}
+
+{% block title %}{{ customer.full_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="{% url 'core:customer_list' %}" class="btn btn-link px-0">&larr; Back to customers</a>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4">{{ customer.full_name }}</h2>
+                    <p class="mb-1"><strong>Email:</strong> {{ customer.email }}</p>
+                    <p class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</p>
+                    <p class="mb-0"><strong>Address:</strong><br>{{ customer.address|default:"—" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Booking History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in customer.bookings.all %}
+                                    <tr>
+                                        <td><a href="{% url 'core:booking_detail' booking.pk %}">#{{ booking.pk }}</a></td>
+                                        <td>{{ booking.room.number }}</td>
+                                        <td>{{ booking.check_in|date:"M d, Y" }}</td>
+                                        <td>{{ booking.check_out|date:"M d, Y" }}</td>
+                                        <td>{{ booking.get_status_display }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">No bookings yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block title %}Guest Reviews — HotelEase{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light border-bottom">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold">Guest Reviews</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 680px;">Real stories from guests who embraced the HotelEase experience. We value every sentiment and continuously polish our craft to exceed expectations.</p>
+        <div class="d-inline-flex align-items-center gap-3 mt-4 px-4 py-3 bg-white shadow-sm rounded-pill">
+            <div class="display-6 fw-bold text-primary mb-0">{{ average_rating }}</div>
+            <div>
+                <div class="text-warning fs-5">
+                    {% for star in rating_range %}
+                        {% if star <= average_rating %}
+                            <i class="fa-solid fa-star"></i>
+                        {% elif star - average_rating < 1 %}
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        {% else %}
+                            <i class="fa-regular fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="small text-muted mb-0">Average guest satisfaction</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for review in reviews %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3">
+                                    {% if review.photo %}
+                                        <img src="{{ review.photo.url }}" alt="{{ review.name }}" class="rounded-circle" width="56" height="56">
+                                    {% else %}
+                                        <span class="fw-semibold">{{ review.name|first|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h3 class="h6 mb-1">{{ review.name }}</h3>
+                                    {% if review.location %}
+                                        <p class="small text-muted mb-0">{{ review.location }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="ms-auto text-warning">
+                                    {% for star in rating_range %}
+                                        {% if star <= review.rating %}
+                                            <i class="fa-solid fa-star"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="text-muted">{{ review.comment }}</p>
+                            <p class="small text-muted mb-0">Stayed {{ review.created_at|date:"F Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-light border">No reviews have been shared yet. Collect guest feedback via the admin panel to showcase here.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "partials/base.html" %}
+{% load humanize static %}
+
+{% block title %}Book Your Stay — HotelEase{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light border-bottom">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold text-navy">Reserve Your Stay</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 760px;">Tell us how long you're staying, choose a signature room category, and we'll craft a personalised welcome for your arrival.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <span class="section-eyebrow d-block">Step 1</span>
+                                <h2 class="h4 fw-semibold mb-0">Guest &amp; stay details</h2>
+                            </div>
+                            <i class="fa-solid fa-clipboard-check text-gold fs-2"></i>
+                        </div>
+                        <form method="post" novalidate id="bookingForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_name" value="booking">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="id_full_name">Full Name</label>
+                                    {{ form.full_name }}
+                                    {% for error in form.full_name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="id_cnic">CNIC</label>
+                                    {{ form.cnic }}
+                                    {% for error in form.cnic.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="id_room_type">Room Type</label>
+                                    {{ form.room_type }}
+                                    {% for error in form.room_type.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="id_address">Address</label>
+                                    {{ form.address }}
+                                    {% for error in form.address.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="id_booking_days">Booking Days (1–7)</label>
+                                    {{ form.booking_days }}
+                                    {% for error in form.booking_days.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <div class="form-check mt-4">
+                                        {{ form.airport_pick_drop }}
+                                        <label class="form-check-label" for="id_airport_pick_drop">Airport Pick &amp; Drop (Rs. {{ airport_charge|intcomma }})</label>
+                                        {% for error in form.airport_pick_drop.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end gap-3 mt-4">
+                                <a class="btn btn-outline-secondary" href="{% url 'core:home' %}">Cancel</a>
+                                <button type="submit" class="btn btn-gold px-4">Confirm Booking</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 110px;">
+                    <div class="card-body p-4 p-lg-5" id="bookingSummary" data-airport-charge="{{ airport_charge }}">
+                        <h3 class="h5 fw-semibold mb-3 text-navy">Reservation summary</h3>
+                        <p class="text-muted small">Nightly tariffs include gourmet breakfast, pool &amp; wellness access, and high-speed Wi-Fi.</p>
+                        <dl class="row small mb-4">
+                            <dt class="col-6 fw-normal text-muted">Room Category</dt>
+                            <dd class="col-6 text-end fw-semibold" id="summaryRoomType">—</dd>
+                            <dt class="col-6 fw-normal text-muted">Duration</dt>
+                            <dd class="col-6 text-end fw-semibold" id="summaryDays">1 night</dd>
+                            <dt class="col-6 fw-normal text-muted">Room Rent</dt>
+                            <dd class="col-6 text-end fw-semibold" id="summaryRoomRent">Rs. 0</dd>
+                            <dt class="col-6 fw-normal text-muted">Airport Service</dt>
+                            <dd class="col-6 text-end fw-semibold" id="summaryAirport">Rs. 0</dd>
+                        </dl>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                            <span class="h5 mb-0 text-muted">Total Payable</span>
+                            <span class="h4 text-navy fw-bold mb-0" id="summaryTotal">Rs. 0</span>
+                        </div>
+                        <div class="alert alert-warning mt-4" role="alert">
+                            <i class="fa-solid fa-circle-info me-2 text-warning"></i>Changes are complimentary up to 24 hours before arrival.
+                        </div>
+                        <h4 class="h6 text-uppercase text-muted mt-4 mb-2">Nightly rates</h4>
+                        <ul class="list-unstyled small mb-0">
+                            {% for card in rate_cards %}
+                                <li class="d-flex justify-content-between py-1 border-bottom border-light">
+                                    <span>{{ card.label }}</span>
+                                    <span class="fw-semibold">Rs. {{ card.price|intcomma }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light" id="guest-reviews">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <span class="section-eyebrow d-block">Step 2</span>
+                        <h2 class="h4 fw-semibold mb-3">Share your experience</h2>
+                        <p class="text-muted small mb-4">Tell future guests what made your stay special. Ratings help us celebrate our concierge team and refine every touchpoint.</p>
+                        <form method="post" class="row g-3" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="form_name" value="review">
+                            <div class="col-12">
+                                <label class="form-label" for="id_name">Name</label>
+                                {{ review_form.name }}
+                                {% for error in review_form.name.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="id_comment">Review</label>
+                                {{ review_form.comment }}
+                                {% for error in review_form.comment.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="id_rating">Rating</label>
+                                {{ review_form.rating }}
+                                {% for error in review_form.rating.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary px-4">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-4">
+                    {% for review in reviews %}
+                        <div class="col-sm-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div>
+                                            <h3 class="h6 fw-semibold mb-1">{{ review.name }}</h3>
+                                            <div class="text-warning small">
+                                                {% for star in rating_range %}
+                                                    {% if star <= review.rating %}
+                                                        <i class="fa-solid fa-star"></i>
+                                                    {% else %}
+                                                        <i class="fa-regular fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-light text-muted">{{ review.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                    <p class="text-muted small mb-0">“{{ review.comment }}”</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-secondary">No reviews yet. Be the first to share your stay with HotelEase.</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ rate_map|json_script:"room-rates-data" }}
+<script src="{% static 'js/booking.js' %}"></script>
+{% endblock %}

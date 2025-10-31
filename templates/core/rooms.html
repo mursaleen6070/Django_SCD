@@ -1,0 +1,151 @@
+{% extends "partials/base.html" %}
+{% load humanize %}
+
+{% block title %}Rooms & Suites — HotelEase{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light border-bottom">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold mb-3">Rooms &amp; Suites</h1>
+                <p class="lead text-muted">Discover thoughtfully designed spaces that combine refined aesthetics with modern comforts. From tranquil single retreats to master suites with sweeping views, every stay at HotelEase feels bespoke.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <div class="info-card flex-fill text-center shadow-sm">
+                        <p class="text-uppercase small text-muted mb-1">Total Rooms</p>
+                        <p class="h2 fw-bold text-primary mb-0">{{ total_rooms }}</p>
+                    </div>
+                    <div class="info-card flex-fill text-center shadow-sm">
+                        <p class="text-uppercase small text-muted mb-1">Available</p>
+                        <span class="badge bg-success-subtle text-success mb-2">Ready to book</span>
+                        <p class="h2 fw-bold text-success mb-0">{{ available_rooms }}</p>
+                    </div>
+                    <div class="info-card flex-fill text-center shadow-sm">
+                        <p class="text-uppercase small text-muted mb-1">Booked</p>
+                        <span class="badge bg-danger-subtle text-danger mb-2">Reserved</span>
+                        <p class="h2 fw-bold text-danger mb-0">{{ booked_rooms }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="bg-white rounded-4 shadow-sm p-4">
+                    <h2 class="h5 mb-3">Room availability by type</h2>
+                    {% for group in room_groups %}
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="fw-semibold text-muted">{{ group.label }}</span>
+                            <span class="badge text-bg-light">{{ group.total }} rooms</span>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted mb-0">Room details will be published soon.</p>
+                    {% endfor %}
+                    <a class="btn btn-primary w-100 mt-4" href="{% url 'bookings:booking_form' %}">Start your booking</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for room in rooms %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 room-card">
+                        <div class="position-relative">
+                            {% if room.main_image %}
+                                <img src="{{ room.main_image.url }}" class="card-img-top" alt="Room {{ room.number }} main view">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="HotelEase room placeholder">
+                            {% endif %}
+                            <span class="badge position-absolute top-0 start-0 m-3 px-3 py-2 {% if room.is_available %}bg-success{% else %}bg-danger{% endif %}">{{ room.status_label }}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <span class="badge bg-light text-dark mb-2">{{ room.room_type_label }}</span>
+                                    <h3 class="h5 mb-1">Room {{ room.number }}</h3>
+                                </div>
+                                <div class="text-end">
+                                    <p class="small text-muted mb-1">Per Night</p>
+                                    <p class="h5 fw-bold text-primary">Rs. {{ room.price|intcomma }}</p>
+                                </div>
+                            </div>
+                            {% if room.description %}
+                                <p class="text-muted small">{{ room.description }}</p>
+                            {% endif %}
+                            {% if room.amenities %}
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    {% for amenity in room.amenities %}
+                                        <span class="badge rounded-pill text-bg-light"><i class="fa-solid fa-check me-1 text-success"></i>{{ amenity }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if room.washroom_image or room.balcony_image or room.exterior_image %}
+                            <div class="card-footer bg-white border-0">
+                                <div class="row g-2">
+                                    {% if room.washroom_image %}
+                                        <div class="col-4">
+                                            <img class="img-fluid rounded" src="{{ room.washroom_image.url }}" alt="Room {{ room.number }} washroom">
+                                        </div>
+                                    {% endif %}
+                                    {% if room.balcony_image %}
+                                        <div class="col-4">
+                                            <img class="img-fluid rounded" src="{{ room.balcony_image.url }}" alt="Room {{ room.number }} balcony">
+                                        </div>
+                                    {% endif %}
+                                    {% if room.exterior_image %}
+                                        <div class="col-4">
+                                            <img class="img-fluid rounded" src="{{ room.exterior_image.url }}" alt="Room {{ room.number }} exterior view">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-light border">No rooms have been added yet. Use the admin portal to create room records.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light border-top">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-eyebrow">Atmosphere</span>
+            <h2 class="section-title">A glimpse of HotelEase</h2>
+            <p class="text-muted">Handpicked snapshots that reflect the warmth and sophistication awaiting every guest.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="gallery-card">
+                    <img class="img-fluid rounded-4 shadow-sm w-100" src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80" alt="Elegant room interior">
+                    <p class="small text-muted mt-2 text-center">Executive Bedroom</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="gallery-card">
+                    <img class="img-fluid rounded-4 shadow-sm w-100" src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80" alt="Luxurious washroom">
+                    <p class="small text-muted mt-2 text-center">Marble-Clad Washrooms</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="gallery-card">
+                    <img class="img-fluid rounded-4 shadow-sm w-100" src="https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?auto=format&fit=crop&w=800&q=80" alt="Balcony view">
+                    <p class="small text-muted mt-2 text-center">Private Balcony Retreats</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="gallery-card">
+                    <img class="img-fluid rounded-4 shadow-sm w-100" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80" alt="Hotel exterior">
+                    <p class="small text-muted mt-2 text-center">Grand Building Exterior</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

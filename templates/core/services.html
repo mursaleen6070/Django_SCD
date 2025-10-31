@@ -1,0 +1,82 @@
+{% extends "partials/base.html" %}
+{% load humanize %}
+
+{% block title %}Signature Services — HotelEase{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light border-bottom">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold">Signature Services</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 720px;">Crafted amenities that amplify every moment of your stay. Whether you seek relaxation, productivity, or indulgence, our hospitality team delivers with flair.</p>
+        <a class="btn btn-primary mt-3" href="{% url 'bookings:booking_form' %}">Plan Your Stay</a>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for service in services %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="service-card h-100 shadow-sm">
+                        <div class="service-icon">
+                            <i class="{{ service.icon }}"></i>
+                        </div>
+                        <h3 class="h5">{{ service.name }}</h3>
+                        <p class="text-muted">{{ service.description }}</p>
+                        {% if service.price %}
+                            <p class="fw-semibold text-primary mb-0">Starting at Rs. {{ service.price|intcomma }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-light border">Services will be updated soon. Please check back or reach out to our concierge team for customised arrangements.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light border-top">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Wellness &amp; Leisure</h3>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li class="mb-2"><i class="fa-solid fa-spa text-primary me-2"></i>Spa therapies with aromatic rituals</li>
+                            <li class="mb-2"><i class="fa-solid fa-dumbbell text-primary me-2"></i>Personal training sessions on demand</li>
+                            <li><i class="fa-solid fa-person-swimming text-primary me-2"></i>Temperature-controlled infinity pool</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Business Support</h3>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li class="mb-2"><i class="fa-solid fa-briefcase text-primary me-2"></i>Executive boardrooms with AV setups</li>
+                            <li class="mb-2"><i class="fa-solid fa-wifi text-primary me-2"></i>Dedicated high-speed enterprise Wi-Fi</li>
+                            <li><i class="fa-solid fa-mug-saucer text-primary me-2"></i>Complimentary gourmet coffee breaks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="h5">Guest Privileges</h3>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li class="mb-2"><i class="fa-solid fa-car-side text-primary me-2"></i>Chauffeur-driven city tours</li>
+                            <li class="mb-2"><i class="fa-solid fa-utensils text-primary me-2"></i>Chef-curated private dining</li>
+                            <li><i class="fa-solid fa-bell-concierge text-primary me-2"></i>24/7 concierge desk for personal errands</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "partials/base.html" %}
+
+{% block title %}Booking #{{ booking.pk }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h3 mb-0">Booking #{{ booking.pk }}</h1>
+            <p class="text-muted mb-0">Placed on {{ booking.created_at|date:"M d, Y H:i" }}</p>
+        </div>
+        <a href="{% url 'core:booking_list' %}" class="btn btn-outline-secondary">Back to list</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Guest</dt>
+                        <dd class="col-sm-8">{{ booking.customer.full_name }}<br><small class="text-muted">{{ booking.customer.email }} · {{ booking.customer.phone }}</small></dd>
+
+                        <dt class="col-sm-4">Room</dt>
+                        <dd class="col-sm-8">Room {{ booking.room.number }} · {{ booking.room.category.name }}</dd>
+
+                        <dt class="col-sm-4">Dates</dt>
+                        <dd class="col-sm-8">{{ booking.check_in|date:"M d, Y" }} → {{ booking.check_out|date:"M d, Y" }} ({{ booking.num_nights }} nights)</dd>
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'cancelled' %}danger{% elif booking.status == 'pending' %}warning text-dark{% else %}secondary{% endif %}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </dd>
+
+                        {% if booking.notes %}
+                            <dt class="col-sm-4">Notes</dt>
+                            <dd class="col-sm-8">{{ booking.notes }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            {% if booking.status != 'cancelled' %}
+                <form method="post" action="{% url 'core:booking_cancel' booking.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Cancel this booking?');">Cancel booking</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Pricing</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1">Nightly rate: <strong>{{ booking.room.rate }}</strong></p>
+                    <p class="mb-1">Nights: <strong>{{ booking.num_nights }}</strong></p>
+                    <hr>
+                    <p class="fs-5 mb-0">Total: <strong>{{ total_cost }}</strong></p>
+                </div>
+            </div>
+
+            {% if payment_form %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Payment</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for field in payment_form %}
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary w-100">Update Payment</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <p class="mb-0 text-muted">No payment recorded for this booking yet.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
