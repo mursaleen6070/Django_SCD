@@ -12,10 +12,10 @@
             <div class="display-6 fw-bold text-primary mb-0">{{ average_rating }}</div>
             <div>
                 <div class="text-warning fs-5">
-                    {% for star in rating_range %}
-                        {% if star <= average_rating %}
+                    {% for state in average_star_icons %}
+                        {% if state == "full" %}
                             <i class="fa-solid fa-star"></i>
-                        {% elif star - average_rating < 1 %}
+                        {% elif state == "half" %}
                             <i class="fa-solid fa-star-half-stroke"></i>
                         {% else %}
                             <i class="fa-regular fa-star"></i>

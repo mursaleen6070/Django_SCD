@@ -232,9 +232,19 @@ def services_view(request):
 def reviews_view(request):
     reviews = Review.objects.all()
     average_rating = reviews.aggregate(avg=Avg("rating"))
+    avg_value = average_rating.get("avg") or 0 if average_rating else 0
+    average_star_icons = []
+    for star in RATING_RANGE:
+        if avg_value >= star:
+            average_star_icons.append("full")
+        elif avg_value + 0.5 >= star:
+            average_star_icons.append("half")
+        else:
+            average_star_icons.append("empty")
     context = {
         "reviews": reviews,
-        "average_rating": round(average_rating.get("avg") or 0, 1) if average_rating else 0,
+        "average_rating": round(avg_value, 1),
+        "average_star_icons": average_star_icons,
         "rating_range": RATING_RANGE,
         "hotel": _hotel_context(),
     }

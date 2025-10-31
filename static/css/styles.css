@@ -150,6 +150,7 @@ h1, h2, h3, .navbar-brand {
 
 .text-gold {
     color: var(--gold-500) !important;
+    font-size: 1.2rem;
 }
 
 .bg-navy {
