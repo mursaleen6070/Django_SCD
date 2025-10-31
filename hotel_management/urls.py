@@ -18,10 +18,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('booking/', include('bookings.urls')),
+     path('accounts/login/', lambda request: redirect('/admin/login/'), name='login'),
     path('', include('core.urls')),
 ]
 
